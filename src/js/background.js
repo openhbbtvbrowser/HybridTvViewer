@@ -18,11 +18,11 @@ var storeTabAndUrl = (tabId, url) => {
 };
 
 /**
- * If url and tab are probably hbbtv app add hbbtv_polyfill to page.
- * Only to this on completed DOM as we need to access tga video objects and stuff
+ * If url and tab indicate an hbbtv app inject hbbtv_polyfill into page.
+ * Add this on completed DOM as we need to access to e.g. OIPF video objects.
  */
 chrome.webNavigation.onDOMContentLoaded.addListener((details) => {
-    if (knownTabs[details.tabId] === details.url || details.url.indexOf("http://localhost:8001/loader.html") > -1) {
+    if (details.url.includes(knownTabs[details.tabId])) { // knownTabs[details.tabId] might be without params and details.url with
         chrome.tabs.executeScript(details.tabId, {
             file: 'content_script.js',
             runAt: 'document_start'
@@ -31,13 +31,11 @@ chrome.webNavigation.onDOMContentLoaded.addListener((details) => {
     }
 });
 
-// -- Filtering browser's HTTP headers -------------------------------------
+/**
+ * Filter headers for hbbtv content-types.
+ */
 chrome.webRequest.onHeadersReceived.addListener(
     function (info) {
-        info.responseHeaders.forEach(function (header) {
-            // console.log('onHeadersReceived header: ', header);
-        });
-        //console.log("tabId", info.tabId, info.responseHeaders);
         var url = (info.url || ''), headers = info.responseHeaders;
 
         if (url.indexOf('http') !== 0) { // if URL is not starting by http(s) then exit ...
@@ -56,11 +54,7 @@ chrome.webRequest.onHeadersReceived.addListener(
                 case knownMimeTypes.atsc:
                 case 'content-type':
                     if (headerWithHbbtv || headerWithCeHtml || headerWithOhtv || headerWithBml) {
-                        // console.log('hbbtv-extension: onHeadersReceived -> hybrid url: ' + url);
-
                         header.value = 'application/xhtml+xml'; // override current content-type to avoid browser automatic download
-
-                        // chrome.browserAction.setIcon && chrome.browserAction.setIcon({ path: '../img/tv-icon128-on.png' });
                         storeTabAndUrl(info.tabId, url);
                     }
                     break;
