@@ -22,7 +22,7 @@ var storeTabAndUrl = (tabId, url) => {
  * Add this on completed DOM as we need to access to e.g. OIPF video objects.
  */
 chrome.webNavigation.onDOMContentLoaded.addListener((details) => {
-    if (details.url.includes(knownTabs[details.tabId])) { // knownTabs[details.tabId] might be without params and details.url with
+    if (knownTabs[details.tabId] && details.url.includes(knownTabs[details.tabId])) { // knownTabs[details.tabId] might be without params and details.url with
         chrome.tabs.executeScript(details.tabId, {
             file: 'content_script.js',
             runAt: 'document_start'
