@@ -13,7 +13,8 @@
     "128": "TV_active_128.png"
   },
   "browser_action": {
-    "default_icon": "TV_inactive_128.png"
+    "default_icon": "TV_inactive_128.png",
+    "default_popup": "popup.html"
   },
   "web_accessible_resources": [
     "hbbtv_polyfill.js",

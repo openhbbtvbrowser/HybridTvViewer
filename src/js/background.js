@@ -11,6 +11,9 @@ var knownMimeTypes = {
 
 // known hbbtv tabs
 const knownTabs = [];
+// popups are loaded anew everytime the popup icon is clicked
+// store the popups state for each tab
+const popupStates = [];
 
 // store tabs that are hbbtv tabs to knownTabsArray with url
 var storeTabAndUrl = (tabId, url) => {
@@ -22,7 +25,12 @@ var storeTabAndUrl = (tabId, url) => {
  * Add this on completed DOM as we need to access to e.g. OIPF video objects.
  */
 chrome.webNavigation.onDOMContentLoaded.addListener((details) => {
-    if (knownTabs[details.tabId] && details.url.includes(knownTabs[details.tabId])) { // knownTabs[details.tabId] might be without params and details.url with
+    if ((knownTabs[details.tabId] && details.url.includes(knownTabs[details.tabId]))
+        // plugin has been enabled via popup -- make sure frameId === 0 as polyfill is sometimes loaded mutliple times for urls 
+        // that shouldn't trigger onDOMContentLoaded
+        || popupStates[details.tabId] && popupStates[details.tabId].forcePlugin === true && details.frameId === 0
+    ) { // knownTabs[details.tabId] might be without params and details.url with
+        console.log("exec content script", details)
         chrome.tabs.executeScript(details.tabId, {
             file: 'content_script.js',
             runAt: 'document_start'
@@ -67,3 +75,32 @@ chrome.webRequest.onHeadersReceived.addListener(
     { urls: ['<all_urls>'] },
     ['blocking', 'responseHeaders'].concat(navigator.userAgent.includes('Chrom') ? chrome.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS : [])
 );
+
+/**
+ * listen for events from popups
+ * {msg: {tabId, type, message}} - payload of the message, the tab of the requesting popup
+ */
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+    if (msg.type === "getPopupState") {
+        // get the tabs popup state
+        const respose = popupStates[msg.tabId] ? popupStates[msg.tabId] : {};
+        sendResponse(respose);
+    }
+    else if (msg.type === "setPopupState") {
+        // the popup state changed - store it and reload the tab
+        if (!popupStates[msg.tabId]) {
+            popupStates[msg.tabId] = {};
+        }
+        popupStates[msg.tabId] = { ...popupStates[msg.tabId], ...msg.message };
+        if (msg.message.forcePlugin !== undefined) {
+            chrome.tabs.get(msg.tabId, (tab) => {
+                console.log("update tab");
+                chrome.tabs.update(tab.id, { url: tab.url });
+            })
+        }
+    } else {
+        // unknown type
+        sendResponse({ type: "error" });
+    }
+    return;
+})

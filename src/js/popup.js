@@ -1,5 +1,4 @@
 import "../css/popup.css";
+import { PopupHandler } from "./popup/popup-handler";
 
-// import hello from "./popup/example";
-
-// hello();
+const popup = new PopupHandler();
