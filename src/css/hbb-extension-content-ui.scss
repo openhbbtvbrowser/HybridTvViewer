@@ -1,15 +1,29 @@
 @charset "UTF-8";
+body {
+  background-color: #eeeeee;
+}
+
 #hbbtv-extension-bottom-ui {
   position: absolute;
-  top: 722px;
+  top: 724px;
   left: 2px;
-  width: 1450px;
+  width: 1452px;
   height: 170px;
   z-index: 300;
   padding-left: 5px;
   border-radius: 7px;
   background-color: #333333;
   box-sizing: border-box;
+}
+
+#iframe-plugin {
+  position: absolute;
+  left: 2px;
+  top: 2px;
+  border-style: unset;
+  border-width: 0px;
+  height: 720px;
+  width: 1280px;
 }
 
 #remote {
@@ -23,7 +37,7 @@
   border-radius: 7px;
   text-align: center;
   position: absolute;
-  left: 1282px;
+  left: 1284px;
   top: 0px;
   z-index: 99999; // force remote to be set above other content
   font-size: 16px;
@@ -45,35 +59,35 @@
     display: inline-block;
     justify-content: center;
 
-   &:hover {
+    &:hover {
       color: #eeeeee;
       /*display: inline-block;*/
       cursor: pointer;
     }
 
-   &:hover:not(:active) {
+    &:hover:not(:active) {
       /* now keep red background for 1s */
       transition: border-color 200ms, color 200ms;
     }
 
-   &:active {
+    &:active {
       border-color: #aaaaaa;
       color: #aaaaaa;
     }
 
-   &:not(.inactive) > .remote-icon {
+    &:not(.inactive) > .remote-icon {
       fill: #aaaaaa;
     }
 
-   &:not(.inactive):hover > .remote-icon {
+    &:not(.inactive):hover > .remote-icon {
       fill: #eeeeee;
     }
 
-   &:hover:not(:active) > .remote-icon {
+    &:hover:not(:active) > .remote-icon {
       transition: fill 200ms, color 200ms;
     }
 
-   &.larger {
+    &.larger {
       width: 51px;
       height: 51px;
       font-size: 160%;
@@ -83,7 +97,7 @@
       margin-right: -6px;
     }
 
-   &.small {
+    &.small {
       width: 25px;
       height: 25px;
       margin-left: 1px;
@@ -94,7 +108,7 @@
       justify-content: center;
     }
 
-   &.medium.color {
+    &.medium.color {
       width: 28px;
       height: 20px;
       padding-top: 2px;
@@ -105,31 +119,31 @@
       align-items: center;
       justify-content: center;
     }
-   &.right {
+    &.right {
       width: 38px;
       height: 38px;
       margin-left: 11px;
     }
 
-   &.left {
+    &.left {
       margin-right: 11px;
       width: 38px;
       height: 38px;
     }
 
-   &.up {
+    &.up {
       margin-bottom: 5px;
       width: 38px;
       height: 38px;
     }
 
-   &.down {
+    &.down {
       margin-top: 5px;
       width: 38px;
       height: 38px;
     }
 
-   &.return {
+    &.return {
       width: 31px;
       height: 22px;
       padding-right: 3px;
@@ -137,10 +151,10 @@
       padding-bottom: 10px;
     }
 
-   &.color.inactive > div {
+    &.color.inactive > div {
       opacity: 0.3;
     }
-   &.inactive {
+    &.inactive {
       cursor: auto;
     }
   }

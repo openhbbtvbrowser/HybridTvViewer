@@ -1,9 +1,6 @@
-import {BottomUi} from "./bottom-ui";
-import {RemoteControl} from "./remote-control";
+import { MessageHandler } from "./message-handler";
+import { KeysetReporterService } from "./keyset-reporter";
 
-
-const bottomUi = new BottomUi();
-bottomUi.start();
-
-const remoteControl = new RemoteControl(document.body);
-remoteControl.initialize();
+const messageHandler = new MessageHandler();
+const reporter = new KeysetReporterService(messageHandler);
+reporter.initialize();

@@ -3,11 +3,14 @@
 import * as remoteTemplate from "./remote-control-template.html";
 
 import { PC_KEYCODES } from "../shared/pc-keycodes.js";
-
+/**
+ * Update remote control classes based on input from iframe through messageHandler.
+ * Dispatch keyevents on iframe on button clicks.
+ */
 export class RemoteControl {
-    constructor(node) {
+    constructor(node, messageHandler, iframe) {
+        this.iframe = iframe;
         node.insertAdjacentHTML("beforeend", remoteTemplate); // insert template into page
-        this.updateInterval = undefined;
         this.controlButtons = undefined;
         this.VK = {
             RED: 0x1, // "RED
@@ -22,6 +25,7 @@ export class RemoteControl {
             ALPHA: 0x200, // A ... Z
             OTHER: 0x400 // OTHERS
         };
+        messageHandler.subscribe("keyset", this.updateKeyset.bind(this));
     }
 
     initialize() {
@@ -37,7 +41,6 @@ export class RemoteControl {
         document.getElementById("power-button").onclick = () => {
             document.location.reload();
         };
-        this.startUpdateInterval();
     }
 
     enableVCR() {
@@ -192,20 +195,13 @@ export class RemoteControl {
         };
     }
 
-    startUpdateInterval() {
-        if (this.updateInterval) {
-            return;
-        }
-        this.updateInterval = setInterval(() => { this.updateView(); }, 20);
-    }
-
     updateView() {
         this.updateKeyset();
     }
 
     doKeyPress(keyCode) {
         let keyboardEvent = new KeyboardEvent('keydown', { bubbles: true, keyCode });
-        document.dispatchEvent(keyboardEvent);
+        this.iframe.contentWindow.document.dispatchEvent(keyboardEvent);
     }
 
     /**
@@ -220,9 +216,10 @@ export class RemoteControl {
                 node.clickListener = node.removeEventListener("click", node.clickListener);
                 delete node.clickListener;
             }
-            node.clickListener = node.addEventListener("click", () => {
-                this.doKeyPress(keyCode);
-            });
+            const listener = () => {
+                this.doKeyPress(keyCode);};
+            node.clickListener = listener;
+            node.addEventListener("click", listener);
         }
     }
 
@@ -239,29 +236,13 @@ export class RemoteControl {
 
     }
 
-    /**
-     * Check registered keyset. 
-     */
-    updateKeyset() {
-        // print keyset
-        const objectTags = document.getElementsByTagName("object");
-        for (const element of objectTags) {
-            if (element.type === "application/oipfApplicationManager") {
-                const appMgr = element;
-                if (typeof appMgr.getOwnerApplication === "function") {
-                    const app = appMgr.getOwnerApplication(document);
-                    const keyset = app.privateData.keyset.value;
-                    if (keyset) {
-                        (keyset & this.VK.VCR) !== 0 ? this.enableVCR() : this.disableVCR();
-                        (keyset & this.VK.GREEN) !== 0 ? this.enableGreen() : this.disableGreen();
-                        (keyset & this.VK.YELLOW) !== 0 ? this.enableYellow() : this.disableYellow();
-                        (keyset & this.VK.BLUE) !== 0 ? this.enableBlue() : this.disableBlue();
-                        (keyset & this.VK.RED) !== 0 ? this.enableRed() : this.disableRed();
-                        (keyset & this.VK.NAVIGATION) !== 0 ? this.enableNavigation() : this.disableNavigation();
-                        (keyset & this.VK.NUMERIC) !== 0 ? this.enableNumeric() : this.disableNumeric();
-                    }
-                }
-            }
-        }
+    updateKeyset(keyset) {
+        keyset.VCR ? this.enableVCR() : this.disableVCR();
+        keyset.GREEN ? this.enableGreen() : this.disableGreen();
+        keyset.YELLOW ? this.enableYellow() : this.disableYellow();
+        keyset.BLUE ? this.enableBlue() : this.disableBlue();
+        keyset.RED ? this.enableRed() : this.disableRed();
+        keyset.NAVIGATION ? this.enableNavigation() : this.disableNavigation();
+        keyset.NUMERIC ? this.enableNumeric() : this.disableNumeric();
     }
 }

@@ -14,14 +14,18 @@ var options = {
     options: path.join(__dirname, "src", "js", "options.js"),
     background: path.join(__dirname, "src", "js", "background.js"),
     content_script: path.join(__dirname, "src", "js", "content_script.js"),
-    in_page_extensions: path.join(__dirname, "src", "js", "in-page-extensions", "index.js")
+    content_script_iframe: path.join(__dirname, "src", "js", "content_script_iframe.js"),
+    in_page_extensions: path.join(__dirname, "src", "js", "in-page-extensions", "index.js"),
+    plugin_extensions: path.join(__dirname, "src", "js", "plugin-extensions", "index.js"),
   },
   output: {
     path: path.join(__dirname, "build"),
     filename: (chunkData) => {
       if (chunkData.chunk.name === 'hbbtv_polyfill') { return 'hbbtv_polyfill.js'; }
       if (chunkData.chunk.name === 'content_script') { return 'content_script.js'; }
+      if (chunkData.chunk.name === 'content_script_iframe') { return 'content_script_iframe.js'; }
       if (chunkData.chunk.name === 'in_page_extensions') { return 'in-page-extensions.js'; }
+      if (chunkData.chunk.name === 'plugin_extensions') { return 'plugin-extensions.js'; }
       else { return "[name].bundle.js"; }
     }
   },

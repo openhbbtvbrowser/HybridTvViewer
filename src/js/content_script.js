@@ -1,5 +1,11 @@
-// compiled and injected into dom by webpack
-import "../css/hbb-extension-content-ui.scss";
+
+if (document && document.body) {
+    initialize();
+} else {
+    document.addEventListener("DOMContentLoaded", () => {
+        initialize();
+    });
+}
 
 // inject a css or js file into dom via tags
 function loadJsCssFile(filename, filetype) {
@@ -17,38 +23,35 @@ function loadJsCssFile(filename, filetype) {
         const name = chrome.runtime.getURL(filename);
         fileref.setAttribute("href", name);
     }
-    if (fileref){
+    if (fileref) {
         document.getElementsByTagName("head")[0].appendChild(fileref);
     }
 }
 
-// inject hbbtv polyfill
-var s = document.createElement('script');
-s.src = chrome.runtime.getURL('hbbtv_polyfill.js');
-// after polyfill has been loaded load the rest of the hbbtv plugin ui.. e.g.: the remote control
-s.onload = function () {
-    // this.remove(); // remove
-    // inject external user interfacess
-    loadJsCssFile("in-page-extensions.js", "js");
-};
-(document.head || document.documentElement).appendChild(s);
+/**
+ * Delete the original page content and create a new page where the original url is loaded into an iframe again.
+ * Background script injects the polyfill there.
+ * In this parent window we add plugin related stuff and messsage handling to 
+ */
+function initialize() {
+    const url = window.location.href;
+    const htmlElement = document.documentElement;
+    while (htmlElement.firstChild) {
+        htmlElement.removeChild(htmlElement.firstChild);
+    }
+    const head = document.createElement("head");
+    htmlElement.appendChild(head);
+    const body = document.createElement("body");
+    htmlElement.appendChild(body);
 
-// inject hbbtv font
-// Note: Tiresias Screenfont as defined for HbbTv is not license free --> we use the "similar" GNU License released Tiresias PC font
-const fontlocation = chrome.runtime.getURL("TiresiasPCfont.ttf");
-let font1 = new FontFace("Tiresias", "url(" + fontlocation + ")"); // selected by font-family:"Tiresias"
-let font2 = new FontFace("Tiresias Signfont", "url(" + fontlocation + ")");
-let font3 = new FontFace("Tiresias Screenfont", "url(" + fontlocation + ")");
-let font4 = new FontFace("TiresiasScreenfont", "url(" + fontlocation + ")");
-document.fonts.add(font1);
-document.fonts.add(font2);
-document.fonts.add(font3);
-document.fonts.add(font4);
-if (document && document.body) {
-    document.body.style["font-family"] = "Tiresias";
-} else {
-    document.addEventListener("DOMContentLoaded", () => {
-        document.body.style["font-family"] = "Tiresias";
-    });
+    body.style = "margin:0;padding:0";
+    //document.getElementsByTagName("html")[0].style.setProperty("overflow", "visible","important");
+
+    var iframe = document.createElement('iframe');
+    iframe.id = "iframe-plugin"
+    iframe.src = url;
+    iframe.allow = "autoplay";
+    document.body.appendChild(iframe);
+
+    loadJsCssFile("plugin-extensions.js", "js");
 }
-

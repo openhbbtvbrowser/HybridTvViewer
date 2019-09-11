@@ -21,6 +21,7 @@
     "hbb-extension-content-ui.css",
     "remote-control.css",
     "in-page-extensions.js",
+    "plugin-extensions.js",
     "TiresiasPCfont.ttf"
   ],
   "permissions": [
