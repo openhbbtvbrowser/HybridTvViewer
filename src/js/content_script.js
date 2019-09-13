@@ -43,15 +43,23 @@ function initialize() {
     htmlElement.appendChild(head);
     const body = document.createElement("body");
     htmlElement.appendChild(body);
-
     body.style = "margin:0;padding:0";
     //document.getElementsByTagName("html")[0].style.setProperty("overflow", "visible","important");
+
+    body.addEventListener("click", (e) => {
+        iframe.classList.remove("focused");
+    }, false);
 
     var iframe = document.createElement('iframe');
     iframe.id = "iframe-plugin"
     iframe.src = url;
     iframe.allow = "autoplay";
-    document.body.appendChild(iframe);
 
+    document.body.appendChild(iframe);    
+    iframe.contentWindow.addEventListener("click", (e) => {
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        iframe.classList.add("focused");
+    });
     loadJsCssFile("plugin-extensions.js", "js");
 }
