@@ -1,6 +1,7 @@
-import { MessageHandler } from "./message-handler";
+import { MessageHandler } from "../shared/message-handler";
 import { KeysetReporterService } from "./keyset-reporter";
-
-const messageHandler = new MessageHandler();
+import {StreamEventHandler} from "./streamevent-handler"
+const messageHandler = new MessageHandler(window, window.parent);
 const reporter = new KeysetReporterService(messageHandler);
 reporter.initialize();
+new StreamEventHandler(messageHandler);

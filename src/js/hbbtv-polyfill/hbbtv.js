@@ -134,11 +134,10 @@ export const hbbtvFn = function () {
     keyset.ALPHA = 0x200;
     keyset.OTHER = 0x400;
     keyset.value = null;
-    window.HbbTVPluginNS = window.HbbTVPluginNS || { keysetSetValueCount: 0 };
     keyset.setValue = function (value) {
         keyset.value = value;
-        // add HbbTVPluginNS namespace and count setValue calls
-        window.HbbTVPluginNS.keysetSetValueCount++;
+        // add HBBTV_POLYFILL_NS namespace and count setValue calls
+        window.HBBTV_POLYFILL_NS.keysetSetValueCount++;
     };
     Object.defineProperties(Application.prototype.privateData, {
         '_document': {

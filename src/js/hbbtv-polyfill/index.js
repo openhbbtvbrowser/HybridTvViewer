@@ -4,6 +4,11 @@ import { VideoHandler } from "./hbb-video-handler.js";
 
 function init() {
     console.log("hbbtv-polyfill: load");
+    // global helper namespace to simplify testing
+    window.HBBTV_POLYFILL_NS = {
+        keysetSetValueCount: 0,
+        streamEventListeners: []
+    };
 
     // set body position
     document.body.style.position = "absolute";

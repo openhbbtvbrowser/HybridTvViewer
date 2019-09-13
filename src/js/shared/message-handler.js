@@ -1,17 +1,22 @@
 
 /**
- * Enable bidirectional message passing between this
- * window and the embedded iframe where the hbbtv view is being rendered.
+ * Enable bidirectional message passing.
+ * 
  */
 export class MessageHandler {
+
     /**
-     * 
-     * @param {*} iframeElem - target iframe
+     *      
+     * Listen for "message" on source element, postMessages to target element.
+     * @param {*} sourceElem 
+     * @param {*} targetElem 
      */
-    constructor(iframeElem) {
-        this.iframeElem = iframeElem;
+    constructor(sourceElem, targetElem) {
+        this.sourceElem = sourceElem;
+        this.targetElem = targetElem;
+
         this.listeners = new Map(); // key: type, val: array(callbacks)
-        window.addEventListener("message", this.onMessage.bind(this), false);
+        this.sourceElem.addEventListener("message", this.onMessage.bind(this), false);
     }
 
     onMessage(message) {
@@ -19,7 +24,7 @@ export class MessageHandler {
             // console.log("parent got message.data", message.data)
             const topic = message.data.topic;
             const callbacks = this.listeners.get(topic);
-            for(let callback of callbacks){
+            for (let callback of callbacks) {
                 callback(message.data.data);
             }
         }
@@ -29,12 +34,12 @@ export class MessageHandler {
     };
 
     sendMessage(message) {
-        this.iframeElem.contentWindow.postMessage(message);
+        this.targetElem.postMessage(message);
     }
 
-    subscribe(topic, callback){
+    subscribe(topic, callback) {
         const callbacks = this.listeners.get(topic);
-        if(callbacks){
+        if (callbacks) {
             callbacks.push(callback);
             this.listeners.set(topic, callback);
         } else {

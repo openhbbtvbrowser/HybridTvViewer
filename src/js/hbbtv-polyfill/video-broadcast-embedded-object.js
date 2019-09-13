@@ -208,16 +208,16 @@ export class OipfVideoBroadcastMapper {
         };
         oipfPluginObject.onChannelChangeSucceeded = function (channel) {
         };
+        // use custom namespace to track and trigger registered streamevents
         oipfPluginObject.addStreamEventListener = function (url, eventName, listener) {
-            window.HbbTVPluginNS.streamEventListener = window.HbbTVPluginNS.streamEventListener || [];
-            window.HbbTVPluginNS.streamEventListener.push({ url, eventName, listener });
+            console.log('hbbtv-polyfill: register listener -', eventName);
+            window.HBBTV_POLYFILL_NS.streamEventListeners.push({ url, eventName, listener });
         };
         oipfPluginObject.removeStreamEventListener = function (url, eventName, listener) {
-            window.HbbTVPluginNS.streamEventListener = window.HbbTVPluginNS.streamEventListener || [];
-            var idx = window.HbbTVPluginNS.streamEventListener.findIndex((e) => {
+            var idx = window.HBBTV_POLYFILL_NS.streamEventListeners.findIndex((e) => {
                 return e.listener === listener && e.eventName === eventName && e.url === url;
             });
-            window.HbbTVPluginNS.streamEventListener.splice(idx, 1);
+            window.HBBTV_POLYFILL_NS.streamEventListeners.splice(idx, 1);
         };
 
     }
