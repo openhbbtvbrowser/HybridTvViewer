@@ -29,37 +29,72 @@ function loadJsCssFile(filename, filetype) {
 }
 
 /**
+ * Send message down the message bus. 
+ * @param {*} messageObj 
+ * @param {*} responseCallback 
+ */
+function sendMessage(messageObj, responseCallback) {
+    chrome.runtime.sendMessage(messageObj, (response) => {
+        responseCallback(response);
+    });
+}
+
+/**
  * Delete the original page content and create a new page where the original url is loaded into an iframe again.
  * Background script injects the polyfill there.
  * In this parent window we add plugin related stuff and messsage handling to 
  */
 function initialize() {
-    const url = window.location.href;
-    const htmlElement = document.documentElement;
-    while (htmlElement.firstChild) {
-        htmlElement.removeChild(htmlElement.firstChild);
-    }
-    const head = document.createElement("head");
-    htmlElement.appendChild(head);
-    const body = document.createElement("body");
-    htmlElement.appendChild(body);
-    body.style = "margin:0;padding:0";
-    //document.getElementsByTagName("html")[0].style.setProperty("overflow", "visible","important");
 
-    body.addEventListener("click", (e) => {
-        iframe.classList.remove("focused");
-    }, false);
 
-    var iframe = document.createElement('iframe');
-    iframe.id = "iframe-plugin"
-    iframe.src = url;
-    iframe.allow = "autoplay";
+    new Promise((res, rej) => {
+        // get currentTab
+        chrome.tabs.query({ active: true, currentWindow: true }, res);
+    }).then((tabs) => {
+        const tabId = tabs[0].id
+        return new Promise((res, rej) => {
+            sendMessage({ type: "getLocation", tabId }, (response) => {
+                res(response);
+            })
+        })
+    }).then((url) => {
+        var iframe = document.createElement('iframe');
+        iframe.id = "iframe-plugin"
+        iframe.src = url;
+        iframe.allow = "autoplay";
+        document.body.appendChild(iframe);
 
-    document.body.appendChild(iframe);    
-    iframe.contentWindow.addEventListener("click", (e) => {
-        e.stopPropagation();
-        e.stopImmediatePropagation();
-        iframe.classList.add("focused");
-    });
-    loadJsCssFile("plugin-extensions.js", "js");
+        loadJsCssFile("plugin-extensions.js", "js");
+    })
+    /*
+        const url = window.location.href;
+        const htmlElement = document.documentElement;
+        while (htmlElement.firstChild) {
+            htmlElement.removeChild(htmlElement.firstChild);
+        }
+        const head = document.createElement("head");
+        htmlElement.appendChild(head);
+        const body = document.createElement("body");
+        htmlElement.appendChild(body);
+        body.style = "margin:0;padding:0";
+        //document.getElementsByTagName("html")[0].style.setProperty("overflow", "visible","important");
+    
+        body.addEventListener("click", (e) => {
+            iframe.classList.remove("focused");
+        }, false);
+    
+        var iframe = document.createElement('iframe');
+        iframe.id = "iframe-plugin"
+        iframe.src = url;
+        iframe.allow = "autoplay";
+    
+        document.body.appendChild(iframe);    
+        iframe.contentWindow.addEventListener("click", (e) => {
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            iframe.classList.add("focused");
+        });
+        loadJsCssFile("plugin-extensions.js", "js");
+        loadJsCssFile("plugin-extensions.js", "js");
+        */
 }

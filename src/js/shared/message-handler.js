@@ -21,7 +21,7 @@ export class MessageHandler {
 
     onMessage(message) {
         try {
-            // console.log("parent got message.data", message.data)
+            // console.log("got message.data", message.data)
             const topic = message.data.topic;
             const callbacks = this.listeners.get(topic);
             for (let callback of callbacks) {
@@ -33,8 +33,8 @@ export class MessageHandler {
         }
     };
 
-    sendMessage(message) {
-        this.targetElem.postMessage(message);
+    sendMessage(message) { // {topic:string, data: any}
+        this.targetElem.postMessage(message, "*");
     }
 
     subscribe(topic, callback) {

@@ -12,6 +12,7 @@ export class RemoteControl {
         this.iframe = iframe;
         node.insertAdjacentHTML("beforeend", remoteTemplate); // insert template into page
         this.controlButtons = undefined;
+        this.messageHandler = messageHandler;
         this.VK = {
             RED: 0x1, // "RED
             GREEN: 0x2, // "GREEN
@@ -25,7 +26,7 @@ export class RemoteControl {
             ALPHA: 0x200, // A ... Z
             OTHER: 0x400 // OTHERS
         };
-        messageHandler.subscribe("keyset", this.updateKeyset.bind(this));
+        this.messageHandler.subscribe("keyset", this.updateKeyset.bind(this));
     }
 
     initialize() {
@@ -200,8 +201,10 @@ export class RemoteControl {
     }
 
     doKeyPress(keyCode) {
-        let keyboardEvent = new KeyboardEvent('keydown', { bubbles: true, keyCode });
-        this.iframe.contentWindow.document.dispatchEvent(keyboardEvent);
+        this.messageHandler.sendMessage({ topic: "doKeyPress", data: { keyCode } });
+        // let keyboardEvent = new KeyboardEvent('keydown', { bubbles: true, keyCode });
+        // this.iframe.contentWindow.document.dispatchEvent(keyboardEvent);
+
     }
 
     /**
@@ -217,7 +220,8 @@ export class RemoteControl {
                 delete node.clickListener;
             }
             const listener = () => {
-                this.doKeyPress(keyCode);};
+                this.doKeyPress(keyCode);
+            };
             node.clickListener = listener;
             node.addEventListener("click", listener);
         }
