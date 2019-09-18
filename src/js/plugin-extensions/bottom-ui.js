@@ -6,8 +6,12 @@ export class BottomUi {
     constructor(messageHandler) {
         this.bottomUiDiv;
         this.messageHandler = messageHandler;
+        this.messageHandler.subscribe("iframeLocation", this.onIframeLocation.bind(this));
     }
 
+    onIframeLocation(data) {// {href}
+        document.getElementById("text-location").innerHTML = data.href;
+    }
     initialize() {
         // add container
         const body = document.getElementsByTagName("body")[0];
@@ -18,6 +22,7 @@ export class BottomUi {
                 this.submitStreamEvent();
             })
         }
+
     }
 
     submitStreamEvent() {

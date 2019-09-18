@@ -24,8 +24,7 @@ var s = document.createElement('script');
 s.src = chrome.runtime.getURL('hbbtv_polyfill.js');
 // after polyfill has been loaded load the rest of the hbbtv plugin.
 s.onload = function () {
-    // this.remove(); // remove
-    // inject external user interfaces
+    // inject extension functionality - e.g. gluecode to between extension parent view and iframe
     loadJsCssFile("in-page-extensions.js", "js");
 };
 (document.head || document.documentElement).appendChild(s);

@@ -18,41 +18,28 @@ const popupStates = [];
 var storeTabAndUrl = (tabId, url) => {
     knownTabs[tabId] = url;
 };
+var deleteTabFromHbbTvPlugin = (tabId) => {
+    delete knownTabs[tabId];
+}
 
 /**
  * If url and tab indicate an hbbtv app inject hbbtv_polyfill into page.
  * Add this on completed DOM as we need to access to e.g. OIPF video objects.
  */
-chrome.webNavigation.onDOMContentLoaded.addListener((details) => {
+chrome.webNavigation.onCommitted.addListener((details) => {
     if ((knownTabs[details.tabId] && details.url.includes(knownTabs[details.tabId]))
         // Plugin has been enabled via popup -- make sure frameId === 0 as polyfill is sometimes loaded mutliple times for urls 
         // that shouldn't trigger onDOMContentLoaded.
         || popupStates[details.tabId] && popupStates[details.tabId].forcePlugin === true && details.frameId === 0
-    ) { // knownTabs[details.tabId] might be without params and details.url with
-        /* if (details.parentFrameId === -1) { // inject into main page
-            console.log("exec content script", details);
-            chrome.tabs.executeScript(details.tabId, {
-                file: 'content_script.js',
-                runAt: 'document_start',
-                frameId: 0,
-            });
-        }
-        else*/ if (details.parentFrameId === 0) { // inject into first level child frames
+    ) { 
+        // inject content_script_iframe into iframe
+        if (details.parentFrameId === 0) { // inject into first level child frames
             console.log("exec content script in iframe", details);
             chrome.tabs.executeScript(details.tabId, {
                 file: 'content_script_iframe.js',
                 runAt: 'document_start',
                 frameId: details.frameId,
             });
-            // The parent "plugin" window needs to follow the hbbtv application in iframe on location changes.
-            // Parent window and iframe need to be in same domain to be able to exchange messages without cross site scripting issues.
-            // Found no way to follow the iframe to another domain in content_script -> do it here. So whenever the iframe gets a onDOMContentLoaded event 
-            // check if the url differs from the window top url and reload tab with new iframe url.
-            /*chrome.tabs.get(details.tabId, (tab) => {
-                if (tab.url !== details.url) {
-                    chrome.tabs.update(tab.id, { url: details.url });
-                }
-            });*/
         }
         chrome.browserAction.setIcon({ tabId: details.tabId, path: "TV_active_128.png" });
     }
@@ -79,10 +66,12 @@ chrome.webRequest.onHeadersReceived.addListener((details) => {
             case 'content-type':
                 if (headerWithHbbtv || headerWithCeHtml || headerWithOhtv || headerWithBml) {
                     header.value = 'application/xhtml+xml'; // override current content-type to avoid browser automatic download
+                    // store current url
                     storeTabAndUrl(details.tabId, url);
-                    if(details.parentFrameId === -1){
+                    // reload the tab with the plugin.html
+                    if (details.parentFrameId === -1) {
                         chrome.tabs.get(details.tabId, (tab) => {
-                                chrome.tabs.update(tab.id, { url: "plugin.html"});
+                            chrome.tabs.update(tab.id, { url: "plugin.html" });
                         });
                     }
                 }
@@ -98,7 +87,7 @@ chrome.webRequest.onHeadersReceived.addListener((details) => {
 );
 
 /**
- * listen for events from popups
+ * Listen for events from and content scripts.
  * {msg: {tabId, type, message}} - payload of the message, the tab of the requesting popup.
  */
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
@@ -117,10 +106,18 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
             popupStates[msg.tabId] = {};
         }
         popupStates[msg.tabId] = { ...popupStates[msg.tabId], ...msg.message };
-        if (msg.message.forcePlugin !== undefined) {
+        if (msg.message.forcePlugin === true) {
             chrome.tabs.get(msg.tabId, (tab) => {
-                console.log("update tab");
-                chrome.tabs.update(tab.id, { url: tab.url });
+                storeTabAndUrl(tab.id, tab.url);
+                chrome.tabs.update(tab.id, { url: "plugin.html" });
+            })
+        }
+        // restore url
+        else if (msg.message.forcePlugin === false) {
+            chrome.tabs.get(msg.tabId, (tab) => {
+                const url = knownTabs[tab.id];
+                deleteTabFromHbbTvPlugin(tab.id);
+                chrome.tabs.update(tab.id, { url });
             })
         }
     } else {

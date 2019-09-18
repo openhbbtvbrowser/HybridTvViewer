@@ -1,7 +1,7 @@
 /**
  * Service to report current keysets in interval.
  */
-export class KeysetReporterService {
+export class StateReporterService {
     /**
      * 
      * @param {*} messageHandler - message handler to handle outgoing messages
@@ -33,8 +33,12 @@ export class KeysetReporterService {
             return;
         }
         this.reportInterval = setInterval(() => { this.reportKeyset(); }, 100);
+        this.reportLocation()
     }
+    reportLocation() {
+        this.messageHandler.sendMessage({topic: "iframeLocation", data: {href: window.location.href} })
 
+    }
     reportKeyset() {
         const activeKeysets = {
             RED: false,

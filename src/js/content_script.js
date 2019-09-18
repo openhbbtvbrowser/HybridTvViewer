@@ -39,14 +39,7 @@ function sendMessage(messageObj, responseCallback) {
     });
 }
 
-/**
- * Delete the original page content and create a new page where the original url is loaded into an iframe again.
- * Background script injects the polyfill there.
- * In this parent window we add plugin related stuff and messsage handling to 
- */
 function initialize() {
-
-
     new Promise((res, rej) => {
         // get currentTab
         chrome.tabs.query({ active: true, currentWindow: true }, res);
@@ -58,43 +51,25 @@ function initialize() {
             })
         })
     }).then((url) => {
+        const overlay = document.getElementById("div-iframe-overlay");
         var iframe = document.createElement('iframe');
         iframe.id = "iframe-plugin"
         iframe.src = url;
         iframe.allow = "autoplay";
+
+        document.body.addEventListener("click", (e) => {
+            iframe.classList.remove("focused");
+        }, false);
+
         document.body.appendChild(iframe);
+
+        overlay.addEventListener("click", (e) => {
+            e.stopImmediatePropagation();
+            iframe.classList.add("focused");
+            // set keyboard focus on iframe even if it is not clickable through overlay div
+            iframe.focus();
+        }, true);
 
         loadJsCssFile("plugin-extensions.js", "js");
     })
-    /*
-        const url = window.location.href;
-        const htmlElement = document.documentElement;
-        while (htmlElement.firstChild) {
-            htmlElement.removeChild(htmlElement.firstChild);
-        }
-        const head = document.createElement("head");
-        htmlElement.appendChild(head);
-        const body = document.createElement("body");
-        htmlElement.appendChild(body);
-        body.style = "margin:0;padding:0";
-        //document.getElementsByTagName("html")[0].style.setProperty("overflow", "visible","important");
-    
-        body.addEventListener("click", (e) => {
-            iframe.classList.remove("focused");
-        }, false);
-    
-        var iframe = document.createElement('iframe');
-        iframe.id = "iframe-plugin"
-        iframe.src = url;
-        iframe.allow = "autoplay";
-    
-        document.body.appendChild(iframe);    
-        iframe.contentWindow.addEventListener("click", (e) => {
-            e.stopPropagation();
-            e.stopImmediatePropagation();
-            iframe.classList.add("focused");
-        });
-        loadJsCssFile("plugin-extensions.js", "js");
-        loadJsCssFile("plugin-extensions.js", "js");
-        */
 }

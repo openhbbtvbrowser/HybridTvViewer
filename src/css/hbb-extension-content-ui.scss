@@ -1,6 +1,7 @@
 @charset "UTF-8";
 body {
   background-color: #eeeeee;
+  color: #eeeeee;
 }
 
 #hbbtv-extension-bottom-ui {
@@ -15,7 +16,16 @@ body {
   background-color: #333333;
   box-sizing: border-box;
 }
-
+// overlay just for tracking the focus state (red border around iframe)
+#div-iframe-overlay {
+  position: absolute;
+  height: 728px;
+  top: 0px;
+  left: 0px;
+  width: 1288px;
+  margin: 0px;
+  z-index: 5;
+}
 #iframe-plugin {
   position: absolute;
   left: 2px;
