@@ -41,14 +41,8 @@ function sendMessage(messageObj, responseCallback) {
 
 function initialize() {
     new Promise((res, rej) => {
-        // get currentTab
-        chrome.tabs.query({ active: true, currentWindow: true }, res);
-    }).then((tabs) => {
-        const tabId = tabs[0].id
-        return new Promise((res, rej) => {
-            sendMessage({ type: "getLocation", tabId }, (response) => {
-                res(response);
-            })
+        sendMessage({ type: "getLocation" }, (response) => {
+            res(response);
         })
     }).then((url) => {
         const overlay = document.getElementById("div-iframe-overlay");

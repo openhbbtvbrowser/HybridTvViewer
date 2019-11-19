@@ -13,6 +13,8 @@ const knownTabs = [];
 // popups are loaded anew everytime the popup icon is clicked
 // store the popups state for each tab
 const popupStates = [];
+// at tabId the user agent to be used is stored
+const userAgents = [];
 
 // store tabs that are hbbtv tabs to knownTabsArray with url
 var storeTabAndUrl = (tabId, url) => {
@@ -21,6 +23,7 @@ var storeTabAndUrl = (tabId, url) => {
 var deleteTabFromHbbTvPlugin = (tabId) => {
     delete knownTabs[tabId];
 }
+
 
 /**
  * If url and tab indicate an hbbtv app inject hbbtv_polyfill into page.
@@ -31,7 +34,7 @@ chrome.webNavigation.onCommitted.addListener((details) => {
         // Plugin has been enabled via popup -- make sure frameId === 0 as polyfill is sometimes loaded mutliple times for urls 
         // that shouldn't trigger onDOMContentLoaded.
         || popupStates[details.tabId] && popupStates[details.tabId].forcePlugin === true && details.frameId === 0
-    ) { 
+    ) {
         // inject content_script_iframe into iframe
         if (details.parentFrameId === 0) { // inject into first level child frames
             console.log("exec content script in iframe", details);
@@ -44,6 +47,23 @@ chrome.webNavigation.onCommitted.addListener((details) => {
         chrome.browserAction.setIcon({ tabId: details.tabId, path: "TV_active_128.png" });
     }
 });
+
+// replace user agent in requests
+chrome.webRequest.onBeforeSendHeaders.addListener(
+    function (details) {
+        if(userAgents[details.tabId]){
+            for (var i = 0; i < details.requestHeaders.length; ++i) {
+                if (details.requestHeaders[i].name === 'User-Agent') {
+                    details.requestHeaders[i].value = userAgents[details.tabId];
+                }
+                break;
+            }
+        }
+        return { requestHeaders: details.requestHeaders };
+    },
+    { urls: ['<all_urls>'] },
+    ['blocking', 'requestHeaders']
+);
 
 /**
  * Filter headers for hbbtv content-types.
@@ -88,18 +108,49 @@ chrome.webRequest.onHeadersReceived.addListener((details) => {
 
 /**
  * Listen for events from and content scripts.
- * {msg: {tabId, type, message}} - payload of the message, the tab of the requesting popup.
+ * {msg: {tabId, type/topic, message}} - payload of the message, the tab of the requesting popup.
  */
-chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-    if (msg.type === "getPopupState") {
-        // get the tabs popup state
-        const respose = popupStates[msg.tabId] ? popupStates[msg.tabId] : {};
-        sendResponse(respose);
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => { // 
+    // messages from content scripts
+    if (msg.type === "getPolyfillBaseConfig") {
+        const userAgent = userAgents[sender.tab.id];
+        const response = {
+            userAgent: userAgents[sender.tab.id],
+            currentChannel: {
+                "channelType": 0,
+                "ccid": "ccid://1.0",
+                "nid": 12289,
+                "dsd": "",
+                "onid": 8468,
+                "tsid": 259,
+                "sid": 769,
+                "name": "Das Erste HD",
+                "longName": "Das Erste HD",
+                "description": "OIPF (SD&S) - TCServiceData doesn’t support yet!",
+                "authorised": true,
+                "genre": null,
+                "hidden": false,
+                "idType": 12,
+                "channelMaxBitRate": 0,
+                "manualBlock": false,
+                "majorChannel": 1,
+                "ipBroadcastID": "rtp://1.2.3.4/",
+                "locked": false
+            }
+        }
+        sendResponse(response);
     }
     else if (msg.type === "getLocation") {
         // get the tabs original url
-        sendResponse(knownTabs[msg.tabId]);
+        sendResponse(knownTabs[sender.tab.id]);
     }
+    else if (msg.type === "userAgent") {
+        //storing userAgent and reload
+        userAgents[sender.tab.id] = ua;
+        chrome.tabs.update(sender.tab.id, { url: "plugin.html" });
+    }
+    // messages from popup service
+    // messages from popup won't contain sender.tab.id - popup will set msg.tabId
     else if (msg.type === "setPopupState") {
         // the popup state changed - store it and reload the tab
         if (!popupStates[msg.tabId]) {
@@ -120,7 +171,13 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
                 chrome.tabs.update(tab.id, { url });
             })
         }
-    } else {
+    }
+    else if (msg.type === "getPopupState") {
+        // get the tabs popup state
+        const response = popupStates[msg.tabId] ? popupStates[msg.tabId] : {};
+        sendResponse(response);
+    }
+    else {
         // unknown type
         sendResponse({ type: "error" });
     }

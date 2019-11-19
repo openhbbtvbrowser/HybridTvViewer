@@ -30,16 +30,7 @@ export class OipfVideoBroadcastMapper {
         // inject OIPF methods ...
 
         //injectBroadcastVideoMethods(oipfPluginObject);
-        var currentChannel = {
-            'TYPE_TV': 12,
-            'channelType': 12,
-            'sid': 1,
-            'onid': 1,
-            'tsid': 1,
-            'name': 'test',
-            'ccid': 'ccid:dvbt.0',
-            'dsd': ''
-        };
+        var currentChannel = window.HBBTV_POLYFILL_NS.currentChannel;
         oipfPluginObject.currentChannel = currentChannel;
         oipfPluginObject.createChannelObject = function () {
             console.log('hbbtv-polyfill: BroadcastVideo createChannelObject() ...');

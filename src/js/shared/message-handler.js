@@ -21,9 +21,9 @@ export class MessageHandler {
 
     onMessage(message) {
         try {
-            // console.log("got message.data", message.data)
+            //  console.log("got message.data", message.data)
             const topic = message.data.topic;
-            const callbacks = this.listeners.get(topic);
+            const callbacks = this.listeners.get(topic) || [];
             for (let callback of callbacks) {
                 callback(message.data.data);
             }

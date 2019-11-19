@@ -150,8 +150,9 @@ export const hbbtvFn = function () {
         'currentChannel': {
             enumerable: true,
             get: function currentChannel() {
-                var currentCcid = window.oipf.getCurrentTVChannel().ccid; // FIXME: ccid is platform-dependent
-                return window.oipf.channelList.getChannel(currentCcid) || {};
+                return window.HBBTV_POLYFILL_NS.currentChannel;
+                // var currentCcid = window.oipf.getCurrentTVChannel().ccid; // FIXME: ccid is platform-dependent
+                // return window.oipf.channelList.getChannel(currentCcid) || {};
             }
         }
     });

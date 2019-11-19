@@ -22,7 +22,25 @@ export class BottomUi {
                 this.submitStreamEvent();
             })
         }
+        const saveUAButton = document.getElementById("input-useragent-save");
+        if (saveUAButton) {
+            saveUAButton.addEventListener("click", () => {
+                this.saveUA();
+            })
+        }
+        // get config and set user agent in ui
+        this._sendMessageToBackgroundScript({type: "getPolyfillBaseConfig"}, (data) => {
+            const userAgent = data.userAgent || navigator.userAgent;
+            document.getElementById("input-useragent").value = userAgent;
+        });
 
+    }
+
+    saveUA() {
+        const ua = document.getElementById("input-useragent").value;
+        new Promise((res, rej) => {
+            this._sendMessageToBackgroundScript({ type: "userAgent", data: { userAgent: ua } });
+        })
     }
 
     submitStreamEvent() {
@@ -31,6 +49,18 @@ export class BottomUi {
         const text = document.getElementById("input-streamevent-text").value;
 
         this.messageHandler.sendMessage({ topic: "streamevent", data: { name, data, text } })
+    }
+
+
+    /**
+    * Send message down the message bus. 
+    * @param {*} messageObj 
+    * @param {*} responseCallback 
+    */
+    _sendMessageToBackgroundScript(messageObj, responseCallback) {
+        chrome.runtime.sendMessage(messageObj, (response) => {
+            responseCallback && responseCallback(response);
+        });
     }
 
 }

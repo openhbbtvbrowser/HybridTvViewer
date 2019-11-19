@@ -6,15 +6,15 @@ export class PopupHandler {
         this.forcePluginCheckboxElement = document.getElementById("popup-checkbox-force-plugin");
         this.tabId;
         this.intitialize();
-
     }
+    
     /**
      * Whenever the popup is opened the popup page is being reloaded.
      * Fetch current state from background page through the message bus. Show its current state. Then add change listeners.
      */
     intitialize() {
         new Promise((res, rej) => {
-            // get currentTab
+            // get currentTab to set message tabId --> sender in background message listener doesn't contain tab.id from popup scripts
             chrome.tabs.query({ active: true, currentWindow: true }, res);
         }).then((tabs) => {
             this.tabId = tabs[0].id
