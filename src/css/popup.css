@@ -1,3 +1,24 @@
+body {
+  color: #eeeeee;
+  background-color: #333333;
+}
+.main-container{
+  width: 150px;
+
+}
+.container-grid {
+  display: grid;
+  grid-gap: 4px;
+}
+.container-flex {
+  display: flex;
+  align-items: center;
+}
+
+.flex-label {
+  flex-basis: 50%;
+}
+
 .switch {
   position: relative;
   display: inline-block;
@@ -36,11 +57,11 @@
 }
 
 input:checked + .slider {
-  background-color: #2196F3;
+  background-color: #5ad21e;
 }
 
 input:focus + .slider {
-  box-shadow: 0 0 1px #2196F3;
+  box-shadow: 0 0 1px #5ad21e;
 }
 
 input:checked + .slider:before {

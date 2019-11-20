@@ -12,10 +12,52 @@ body {
   height: 170px;
   z-index: 300;
   padding-left: 5px;
+  padding-top: 5px;
   border-radius: 7px;
   background-color: #333333;
   box-sizing: border-box;
+  .text-input{
+    border-radius: 3px;
+    border-style: none;
+  }
+
+  .grid-container{
+    display: grid;
+    grid-row-gap: 2px
+  }
+  .flex-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    .label-box {
+      flex-basis: 10%;
+    }
+    .input-box {
+      flex-basis: 90%;
+    }
+  }
 }
+
+.button {
+  background-color: #5ad21e;
+  border: none;
+  color: white;
+  /* padding: 15px 32px; */
+  border-radius: 5px;
+  border-color: #aaaaaa;
+  border-style: solid;
+  border-width: 1px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 12px;
+  /* margin: 4px 2px; */
+  cursor: pointer;
+  &:hover {
+    border-color: #eeeeee;
+  }
+}
+
 // overlay just for tracking the focus state (red border around iframe)
 #div-iframe-overlay {
   position: absolute;
