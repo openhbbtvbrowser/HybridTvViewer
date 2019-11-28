@@ -146,7 +146,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => { //
     }
     else if (msg.type === "userAgent") {
         //storing userAgent and reload
-        userAgents[sender.tab.id] = ua;
+        userAgents[sender.tab.id] = msg.data.userAgent;
         chrome.tabs.update(sender.tab.id, { url: "plugin.html" });
     }
     // messages from popup service
