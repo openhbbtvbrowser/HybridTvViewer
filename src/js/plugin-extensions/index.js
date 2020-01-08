@@ -3,6 +3,7 @@ import "../../css/hbb-extension-content-ui.scss";
 
 import { BottomUi } from "./bottom-ui";
 import { RemoteControl } from "./remote-control";
+import { ChannelList } from "./channel-list";
 import { MessageHandler } from "../shared/message-handler";
 
 
@@ -15,3 +16,5 @@ bottomUi.initialize();
 const remoteControl = new RemoteControl(document.body, messageHandler, iframeElem);
 remoteControl.initialize();
 
+const channelList = new ChannelList(document.body, messageHandler);
+channelList.initialize();

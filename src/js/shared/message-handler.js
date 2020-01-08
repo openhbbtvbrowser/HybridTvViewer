@@ -21,7 +21,6 @@ export class MessageHandler {
 
     onMessage(message) {
         try {
-            //  console.log("got message.data", message.data)
             const topic = message.data.topic;
             const callbacks = this.listeners.get(topic) || [];
             for (let callback of callbacks) {
@@ -41,7 +40,7 @@ export class MessageHandler {
         const callbacks = this.listeners.get(topic);
         if (callbacks) {
             callbacks.push(callback);
-            this.listeners.set(topic, callback);
+            this.listeners.set(topic, callbacks);
         } else {
             this.listeners.set(topic, [callback])
         }
