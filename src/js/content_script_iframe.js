@@ -38,7 +38,7 @@ function setupAndLoad(response) {
     });
     window.HBBTV_POLYFILL_NS = window.HBBTV_POLYFILL_NS || {};
     window.HBBTV_POLYFILL_NS.currentChannel = ${JSON.stringify(response.currentChannel)};
-    console.log('${response}');
+    console.log('${JSON.stringify(response)}');
     `;
     var newScript = document.createElement("script");
     var inlineScript = document.createTextNode(setupPolyfillJs);

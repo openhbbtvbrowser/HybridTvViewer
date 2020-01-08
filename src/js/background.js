@@ -15,6 +15,8 @@ const knownTabs = [];
 const popupStates = [];
 // at tabId the user agent to be used is stored
 const userAgents = [];
+// at tabId the channel to be used is stored
+const channels = [];
 
 // store tabs that are hbbtv tabs to knownTabsArray with url
 var storeTabAndUrl = (tabId, url) => {
@@ -110,33 +112,35 @@ chrome.webRequest.onHeadersReceived.addListener((details) => {
  * Listen for events from and content scripts.
  * {msg: {tabId, type/topic, message}} - payload of the message, the tab of the requesting popup.
  */
-chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => { // 
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => { //
     // messages from content scripts
     if (msg.type === "getPolyfillBaseConfig") {
-        const userAgent = userAgents[sender.tab.id];
+        const defaultChannel = {
+            "channelType": 0,
+            "ccid": "ccid://1.0",
+            "nid": 12289,
+            "dsd": "",
+            "onid": 8468,
+            "tsid": 259,
+            "sid": 769,
+            "name": "Das Erste HD",
+            "longName": "Das Erste HD",
+            "description": "OIPF (SD&S) - TCServiceData doesn’t support yet!",
+            "authorised": true,
+            "genre": null,
+            "hidden": false,
+            "idType": 12,
+            "channelMaxBitRate": 0,
+            "manualBlock": false,
+            "majorChannel": 1,
+            "ipBroadcastID": "rtp://1.2.3.4/",
+            "locked": false
+        };
+        const channel = channels[sender.tab.id] ? channels[sender.tab.id].channel : defaultChannel;
+
         const response = {
             userAgent: userAgents[sender.tab.id],
-            currentChannel: {
-                "channelType": 0,
-                "ccid": "ccid://1.0",
-                "nid": 12289,
-                "dsd": "",
-                "onid": 8468,
-                "tsid": 259,
-                "sid": 769,
-                "name": "Das Erste HD",
-                "longName": "Das Erste HD",
-                "description": "OIPF (SD&S) - TCServiceData doesn’t support yet!",
-                "authorised": true,
-                "genre": null,
-                "hidden": false,
-                "idType": 12,
-                "channelMaxBitRate": 0,
-                "manualBlock": false,
-                "majorChannel": 1,
-                "ipBroadcastID": "rtp://1.2.3.4/",
-                "locked": false
-            }
+            currentChannel: channel
         }
         sendResponse(response);
     }
@@ -145,9 +149,14 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => { //
         sendResponse(knownTabs[sender.tab.id]);
     }
     else if (msg.type === "userAgent") {
-        //storing userAgent and reload
+        // storing userAgent and reload
         userAgents[sender.tab.id] = msg.data.userAgent;
         chrome.tabs.update(sender.tab.id, { url: "plugin.html" });
+    }
+    else if (msg.type === "channelChange") {
+        // storing channel
+        channels[sender.tab.id] = msg.data.channel;
+        chrome.tabs.update(sender.tab.id, { url: msg.data.appUrl });
     }
     // messages from popup service
     // messages from popup won't contain sender.tab.id - popup will set msg.tabId
