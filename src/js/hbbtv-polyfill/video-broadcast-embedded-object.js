@@ -21,7 +21,7 @@ export class OipfVideoBroadcastMapper {
             this.videoTag.setAttribute('autoplay', ''); // note: call to bindToCurrentChannel() or play() is doing it
             this.videoTag.setAttribute('loop', '');
             this.videoTag.setAttribute('style', 'top:0px; left:0px; width:100%; height:100%;');
-            this.videoTag.src = "http://cdn.smartclip.net/assets/atv/video/Caminandes1_720p.mp4";
+            this.videoTag.src = "";
             oipfPluginObject.appendChild(this.videoTag);
             oipfPluginObject.playState = 2;
             console.info('hbbtv-polyfill: BROADCAST VIDEO PLAYER ... ADDED');
