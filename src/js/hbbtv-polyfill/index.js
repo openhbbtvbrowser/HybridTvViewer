@@ -25,9 +25,8 @@ function init() {
     };
 
     // set body position
-    document.body.style.position = "absolute";
-    document.body.style.width = "1280px";
-    document.body.style.height = "720px";
+    document.body.style.width = "100%";
+    document.body.style.height = "100%";
 
     keyEventInit();
     hbbtvFn();
