@@ -33,6 +33,16 @@ function init() {
 
     new VideoHandler().initialize();
 
+    // convenience method: Javascript to VDR wrapper method, one-way
+    window.signalVdr = function(command) {
+        window.cefQuery({
+            request: 'VDR:' + command,
+            persistent: false,
+            onSuccess: function(response) {},
+            onFailure: function(error_code, error_message) {}
+        });
+    };
+
     console.log("hbbtv-polyfill: loaded");
 }
 if (!document.body) {

@@ -56,6 +56,7 @@ var options = {
       },
     ]
   },
+  // devtool: 'inline-source-map',
   plugins: [
     // clean the build folder
     new CleanWebpackPlugin(),
