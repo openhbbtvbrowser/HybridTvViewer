@@ -1,4 +1,8 @@
 # HybridTV Dev Environment
+Original repository can be found at: https://github.com/smartclip/HybridTvViewer 
+
+This repository contains only files which are needed for my purposes.
+
 ## HbbTV polyfill and Chrome extension
 Polyfill to add basic HbbTV functionality to a browser. Uses HTML5 video elements for 
 media playback and dispatches media events onto OIPF objects. Available as Chrome extension but also made for functional testing in a browser without extension support (eg. Headless Chrome).
@@ -27,5 +31,6 @@ Headless Chrome does not support extensions, so we uncoupled the polyfill from t
 * Removed UI
 ## Credits
 Project has been forked from Karl Rousseau's HybridTVViewer (https://github.com/karl-rousseau/HybridTvViewer)
+Project has been forked from Smartclips HybridTVViewer (https://github.com/smartclip/HybridTvViewer)
 Background videos are kindly provided by Blender Foundation (https://www.blender.org/about/projects/)
 Thank you very much!
