@@ -2,8 +2,10 @@ import { keyEventInit } from "./keyevent-init.js";
 import { hbbtvFn } from "./hbbtv.js";
 import { VideoHandler } from "./hbb-video-handler.js";
 
+var _DEBUG_ = false;
+
 function init() {
-    console.log("hbbtv-polyfill: load");
+    _DEBUG_ && console.log("hbbtv-polyfill: load");
     // global helper namespace to simplify testing
     window.HBBTV_POLYFILL_NS = window.HBBTV_POLYFILL_NS || {
     };
@@ -25,25 +27,16 @@ function init() {
     };
 
     // set body position
-    document.body.style.width = "1920px";
-    document.body.style.height = "1080px";
+    document.body.style.position = "absolute";
+    document.body.style.width = "1280px";
+    document.body.style.height = "720px";
 
     keyEventInit();
     hbbtvFn();
 
     new VideoHandler().initialize();
 
-    // convenience method: Javascript to VDR wrapper method, one-way
-    window.signalVdr = function(command) {
-        window.cefQuery({
-            request: 'VDR:' + command,
-            persistent: false,
-            onSuccess: function(response) {},
-            onFailure: function(error_code, error_message) {}
-        });
-    };
-
-    console.log("hbbtv-polyfill: loaded");
+    _DEBUG_ && console.log("hbbtv-polyfill: loaded");
 }
 if (!document.body) {
     document.addEventListener("DOMContentLoaded", init);

@@ -1,8 +1,7 @@
-import {PC_KEYCODES} from "../shared/pc-keycodes.js";
-
+var _DEBUG_ = false;
 
 export const keyEventInit = function () {
-    console.log("hbbtv-polyfill: keyEventInit");
+    _DEBUG_ && console.log("hbbtv-polyfill: keyEventInit");
 
     window.KeyEvent = window.KeyEvent || {}; // defining default global KeyEvent as defined in CEA-HTML 2014 specs
     window.KeyEvent.VK_LEFT = (typeof window.KeyEvent.VK_LEFT !== 'undefined' ? window.KeyEvent.VK_LEFT : 0x25);
@@ -78,7 +77,7 @@ export const keyEventInit = function () {
     window.addEventListener(
         "keydown",
         (evt) => {
-            console.log("hbbtv-polyfill: browser keydown " + evt.keyCode, "internal", evt.detail && evt.detail.hbbInternal === true);
+            _DEBUG_ && console.log("hbbtv-polyfill: browser keydown " + evt.keyCode, "internal", evt.detail && evt.detail.hbbInternal === true);
             if (evt.detail && evt.detail.hbbInternal === true) {
                 return;
             }
@@ -86,17 +85,13 @@ export const keyEventInit = function () {
             evt.preventDefault();
             evt.stopPropagation();
             var keyCode = evt.which || evt.keyCode;
-            if (keyCode === 82) {
-                // 'r' key on PC
+            if (keyCode === 403) {
                 doKeyPress("VK_RED");
-            } else if (keyCode === 71) {
-                // 'g' key on PC
+            } else if (keyCode === 404) {
                 doKeyPress("VK_GREEN");
-            } else if (keyCode === 89) {
-                // 'y' key on PC
+            } else if (keyCode === 405) {
                 doKeyPress("VK_YELLOW");
-            } else if (keyCode === 66) {
-                // 'b' key on PC
+            } else if (keyCode === 406) {
                 doKeyPress("VK_BLUE");
             } else if (keyCode === 37) {
                 doKeyPress("VK_LEFT");
@@ -105,46 +100,40 @@ export const keyEventInit = function () {
             } else if (keyCode === 39) {
                 doKeyPress("VK_RIGHT");
             } else if (keyCode === 40) {
-                // DOWN on PC
                 doKeyPress("VK_DOWN");
             } else if (keyCode === 13) {
-                // ENTER on PC
                 doKeyPress("VK_ENTER");
             } else if (keyCode === 8) {
-                // Backspace on PC
                 doKeyPress("VK_BACK");
-            } else if (keyCode === 96) {
+            } else if (keyCode === 48) {
                 doKeyPress("VK_0");
-            } else if (keyCode === 97) {
+            } else if (keyCode === 49) {
                 doKeyPress("VK_1");
-            } else if (keyCode === 98) {
+            } else if (keyCode === 50) {
                 doKeyPress("VK_2");
-            } else if (keyCode === 99) {
+            } else if (keyCode === 51) {
                 doKeyPress("VK_3");
-            } else if (keyCode === 100) {
+            } else if (keyCode === 52) {
                 doKeyPress("VK_4");
-            } else if (keyCode === 101) {
+            } else if (keyCode === 53) {
                 doKeyPress("VK_5");
-            } else if (keyCode === 102) {
+            } else if (keyCode === 54) {
                 doKeyPress("VK_6");
-            } else if (keyCode === 103) {
+            } else if (keyCode === 55) {
                 doKeyPress("VK_7");
-            } else if (keyCode === 104) {
+            } else if (keyCode === 56) {
                 doKeyPress("VK_8");
-            } else if (keyCode === 105) {
+            } else if (keyCode === 57) {
                 doKeyPress("VK_9");
-            } else if (keyCode === 116) {
-                // F5 in browser
-                window.location.reload();
-            } else if (keyCode === PC_KEYCODES.k) {
+            } else if (keyCode === 19) {
                 doKeyPress("VK_PAUSE");
-            } else if (keyCode === PC_KEYCODES.j) {
+            } else if (keyCode === 415) {
                 doKeyPress("VK_PLAY");
-            } else if (keyCode === PC_KEYCODES.h) {
+            } else if (keyCode === 412) {
                 doKeyPress("VK_REWIND");
-            } else if (keyCode === PC_KEYCODES.l) {
+            } else if (keyCode === 413) {
                 doKeyPress("VK_STOP");
-            } else if (keyCode === PC_KEYCODES.oe) {
+            } else if (keyCode === 417) {
                 doKeyPress("VK_FAST_FWD");
             }
         },
