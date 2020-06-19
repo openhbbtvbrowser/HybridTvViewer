@@ -30,6 +30,7 @@ export class VideoHandler {
 
         if (mimeType.lastIndexOf('video/broadcast', 0) === 0) {
             _DEBUG_ && console.log('hbbtv-polyfill: BROADCAST VIDEO PLAYER ...');
+            window.signalopenhbbtvbrowser("OipfVideoBroadcastEmbeddedObject");
             this.videoBroadcastEmbeddedObject = new OipfVideoBroadcastMapper(node);
         }
         if (mimeType.lastIndexOf('video/mpeg4', 0) === 0 ||
@@ -37,11 +38,13 @@ export class VideoHandler {
             mimeType.lastIndexOf('audio/mp4', 0) === 0 ||  // aac audio
             mimeType.lastIndexOf('audio/mpeg', 0) === 0) { // mp3 audio
             _DEBUG_ && console.log('hbbtv-polyfill: BROADBAND VIDEO PLAYER ...');
+            window.signalopenhbbtvbrowser("OipfAVControlObject:" + node.data);
             new OipfAVControlMapper(node);
         }
         // setup mpeg dash player
         if(mimeType.lastIndexOf('application/dash+xml', 0) === 0){
             _DEBUG_ && console.log('hbbtv-polyfill: DASH VIDEO PLAYER ...');
+            window.signalopenhbbtvbrowser("OipfAVControlObject:" + node.data);
             new OipfAVControlMapper(node, true);
         }
     }

@@ -180,10 +180,31 @@ export const hbbtvFn = function () {
     };
 
     Application.prototype.createApplication = function (uri, createChild) {
+        _DEBUG_ && console.log('hbbtv-polyfill: createApplication: ' + uri);
 
-        // "dvb://current.ait/11.2?select=special%3Asett%3Bsel%3Aidxok%3A6"
-        const query = uri.split("?")[1] || "";
-        window.location.href = window.location.origin + (query ? "?" + query : "");
+        var newLocation = uri;
+
+        if (uri.startsWith("dvb://current.ait")) {
+            var app;
+
+            app = /dvb:\/\/current\.ait\/(.*)\.(.*)([\?#].*)/.exec(uri);
+            if (app == undefined) {
+                app = /dvb:\/\/current\.ait\/(.*)\.(.*)/.exec(uri);
+            }
+
+            if (app) {
+                let appid = ('0' + app[2].toLocaleUpperCase()).slice(-2);
+                let newurl = window._HBBTV_APPURL_.get(appid);
+
+                if (newurl) {
+                    newLocation = newurl + (app[3] ? app[3] : "");
+                }
+            }
+        }
+
+        _DEBUG_ && console.log('hbbtv-polyfill: createApplication: ' + uri + " -> " + newLocation);
+
+        window.signalopenhbbtvbrowser("createApplication:" + newLocation);
     };
 
     Application.prototype.destroyApplication = function () {
@@ -197,10 +218,10 @@ export const hbbtvFn = function () {
     window.oipfConfiguration = window.oipfConfiguration || {};
 
     oipfConfiguration.configuration = {};
-    oipfConfiguration.configuration.preferredAudioLanguage = window.localStorage.getItem('tvViewer_country') || 'ENG';
-    oipfConfiguration.configuration.preferredSubtitleLanguage = window.localStorage.getItem('tvViewer_country') || 'ENG,FRA';
-    oipfConfiguration.configuration.preferredUILanguage = window.localStorage.getItem('tvViewer_country') || 'ENG,FRA';
-    oipfConfiguration.configuration.countryId = window.localStorage.getItem('tvViewer_country') || 'ENG';
+    oipfConfiguration.configuration.preferredAudioLanguage = window.HBBTV_POLYFILL_NS.preferredLanguage || 'ENG';
+    oipfConfiguration.configuration.preferredSubtitleLanguage = window.HBBTV_POLYFILL_NS.preferredLanguage || 'ENG,FRA';
+    oipfConfiguration.configuration.preferredUILanguage = window.HBBTV_POLYFILL_NS.preferredLanguage || 'ENG,FRA';
+    oipfConfiguration.configuration.countryId = window.HBBTV_POLYFILL_NS.preferredLanguage || 'ENG';
     //oipfConfiguration.configuration.regionId = 0;
     //oipfConfiguration.localSystem = {};
     oipfConfiguration.getText = function (key) {
@@ -211,7 +232,7 @@ export const hbbtvFn = function () {
 
     // 7.15.3 The application/oipfCapabilities embedded object ---------------------
     window.oipfCapabilities = window.oipfCapabilities || {};
-    var storedCapabilities = window.localStorage.getItem('tvViewer_capabilities'); // FIXME: use tvViewer_caps object
+    var storedCapabilities = null;
     var currentCapabilities = storedCapabilities ||
         '<profilelist>' +
         '<ui_profile name="OITF_HD_UIPROF+META_SI+META_EIT+TRICKMODE+RTSP+AVCAD+DRM+DVB_T">' +

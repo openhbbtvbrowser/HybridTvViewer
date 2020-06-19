@@ -165,4 +165,7 @@ export const keyEventInit = function () {
         document.dispatchEvent(keypressEvent);
     }
 
+    window.keypressopenhbbtvbrowser = function(keyCode) {
+        doKeyPress(keyCode);
+    };
 };
