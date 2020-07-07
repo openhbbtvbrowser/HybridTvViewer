@@ -234,24 +234,31 @@ export const hbbtvFn = function () {
     window.oipfCapabilities = window.oipfCapabilities || {};
     var storedCapabilities = null;
     var currentCapabilities = storedCapabilities ||
-        '<profilelist>' +
-        '<ui_profile name="OITF_HD_UIPROF+META_SI+META_EIT+TRICKMODE+RTSP+AVCAD+DRM+DVB_T">' +
+        '<profilelist xmlns="urn:hbbtv:config:oitf:oitfCapabilities:2017-1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:hbbtv:config:oitf:oitfCapabilities:2017-1 hbbtv-capabilities-2020-1.xsd">' +
+        '<ui_profile name="OITF_HD_UIPROF+DVB_S+TRICKMODE+META_SI+META_EIT+RTSP+AVCAD+DRM">' +
         '<ext>' +
-        '<colorkeys>true</colorkeys>' +
-        '<video_broadcast type="ID_DVB_T" scaling="arbitrary" minSize="0">true</video_broadcast>' +
         '<parentalcontrol schemes="dvb-si">true</parentalcontrol>' +
+        '<clientMetadata type="dvb-si">true</clientMetadata>' +
+        '<temporalClipping/>' +
+        '<html5_media>true</html5_media>' +
+        '<ta version="1.1.1" broadcastTimelineMonitoring="true" GOPIndependentSwitchToBroadcast="true">' +
+        '<profile>urn:hbbtv:ta:profile:2019:1</profile>' +
+        '<profile>urn:hbbtv:ta:profile:2019:2</profile>' +
+        '</ta>' +
         '</ext>' +
         '<drm DRMSystemID="urn:dvb:casystemid:19219">TS MP4</drm>' +
         '<drm DRMSystemID="urn:dvb:casystemid:1664" protectionGateways="ci+">TS</drm>' +
         '</ui_profile>' +
         '<audio_profile name=\"MPEG1_L3\" type=\"audio/mpeg\"/>' +
         '<audio_profile name=\"HEAAC\" type=\"audio/mp4\"/>' +
-        '<video_profile name=\"TS_AVC_SD_25_HEAAC\" type=\"video/mpeg\"/>' +
-        '<video_profile name=\"TS_AVC_HD_25_HEAAC\" type=\"video/mpeg\"/>' +
+        '<audio_profile name=\"MP4_HEAAC\" type=\"audio/mp4\" transport=\"dash\" sync_tl=\"dash_pr\"/>' +
+        '<video_profile name=\"MP4_AVC_HD_25_HEAAC\" type=\"video/mp4\" transport=\"dash\" sync_tl=\"dash_pr\"/>' +
+        '<video_profile name=\"MP4_AVC_SD_25_HEAAC_EBUTTD\" type=\"video/mp4\" transport=\"dash\" sync_tl=\"dash_pr\"/>' +
+        '<video_profile name=\"MP4_AVC_HD_25_HEAAC_EBUTTD\" type=\"video/mp4\" transport=\"dash\" sync_tl=\"dash_pr\"/>' +
+        '<video_profile name=\"TS_AVC_SD_25_HEAAC\" type=\"video/mpeg\" sync_tl=\"temi\"/>' +
+        '<video_profile name=\"TS_AVC_HD_25_HEAAC\" type=\"video/mpeg\" sync_tl=\"temi\"/>' +
         '<video_profile name=\"MP4_AVC_SD_25_HEAAC\" type=\"video/mp4\"/>' +
         '<video_profile name=\"MP4_AVC_HD_25_HEAAC\" type=\"video/mp4\"/>' +
-        '<video_profile name=\"MP4_AVC_SD_25_HEAAC\" type=\"video/mp4\" transport=\"dash\"/>' +
-        '<video_profile name=\"MP4_AVC_HD_25_HEAAC\" type=\"video/mp4\" transport=\"dash\"/>' +
         '</profilelist>';
     var videoProfiles = currentCapabilities.split('video_profile');
     window.oipfCapabilities.xmlCapabilities = (new window.DOMParser()).parseFromString(currentCapabilities, 'text/xml');
