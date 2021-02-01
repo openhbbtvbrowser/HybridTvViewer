@@ -1,8 +1,6 @@
 import { OipfVideoBroadcastMapper } from "./video-broadcast-embedded-object";
 import { OipfAVControlMapper } from "./a-v-control-embedded-object";
 
-var _DEBUG_ = false;
-
 // append play method to <object> tag
 HTMLObjectElement.prototype.play = () => { };
 
@@ -29,7 +27,7 @@ export class VideoHandler {
         mimeType = mimeType.toLowerCase(); // ensure lower case string comparison
 
         if (mimeType.lastIndexOf('video/broadcast', 0) === 0) {
-            _DEBUG_ && console.log('hbbtv-polyfill: BROADCAST VIDEO PLAYER ...');
+            window.HBBTV_POLYFILL_DEBUG && console.log('hbbtv-polyfill: BROADCAST VIDEO PLAYER ...');
             window.signalopenhbbtvbrowser("OipfVideoBroadcastEmbeddedObject");
             this.videoBroadcastEmbeddedObject = new OipfVideoBroadcastMapper(node);
         }
@@ -37,13 +35,13 @@ export class VideoHandler {
             mimeType.lastIndexOf('video/mp4', 0) === 0 ||  // h.264 video
             mimeType.lastIndexOf('audio/mp4', 0) === 0 ||  // aac audio
             mimeType.lastIndexOf('audio/mpeg', 0) === 0) { // mp3 audio
-            _DEBUG_ && console.log('hbbtv-polyfill: BROADBAND VIDEO PLAYER ...');
+            window.HBBTV_POLYFILL_DEBUG && console.log('hbbtv-polyfill: BROADBAND VIDEO PLAYER ...');
             window.signalopenhbbtvbrowser("OipfAVControlObject:" + node.data);
             new OipfAVControlMapper(node);
         }
         // setup mpeg dash player
         if(mimeType.lastIndexOf('application/dash+xml', 0) === 0){
-            _DEBUG_ && console.log('hbbtv-polyfill: DASH VIDEO PLAYER ...');
+            window.HBBTV_POLYFILL_DEBUG && console.log('hbbtv-polyfill: DASH VIDEO PLAYER ...');
             window.signalopenhbbtvbrowser("OipfAVControlObject:" + node.data);
             new OipfAVControlMapper(node, true);
         }

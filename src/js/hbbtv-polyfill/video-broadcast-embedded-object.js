@@ -5,11 +5,9 @@
  * 7.13.1 The video/broadcast embedded object
  */
 
-var _DEBUG_ = false;
-
 export class OipfVideoBroadcastMapper {
     constructor(node) { // the vide/broadcast object tag
-        _DEBUG_ && console.log('hbbtv-polyfill: Create video to oipf object mapper.');
+        window.HBBTV_POLYFILL_DEBUG && console.log('hbbtv-polyfill: Create video to oipf object mapper.');
 
         this.oipfPluginObject = node;
         this.videoTag = undefined;
@@ -26,7 +24,7 @@ export class OipfVideoBroadcastMapper {
             this.videoTag.src = "";
             oipfPluginObject.appendChild(this.videoTag);
             oipfPluginObject.playState = 2;
-            _DEBUG_ &&  console.info('hbbtv-polyfill: BROADCAST VIDEO PLAYER ... ADDED');
+            window.HBBTV_POLYFILL_DEBUG &&  console.info('hbbtv-polyfill: BROADCAST VIDEO PLAYER ... ADDED');
         }
 
         // inject OIPF methods ...
@@ -35,18 +33,18 @@ export class OipfVideoBroadcastMapper {
         var currentChannel = window.HBBTV_POLYFILL_NS.currentChannel;
         oipfPluginObject.currentChannel = currentChannel;
         oipfPluginObject.createChannelObject = function () {
-            _DEBUG_ && console.log('hbbtv-polyfill: BroadcastVideo createChannelObject() ...');
+            window.HBBTV_POLYFILL_DEBUG && console.log('hbbtv-polyfill: BroadcastVideo createChannelObject() ...');
         };
         oipfPluginObject.bindToCurrentChannel = function () {
-            _DEBUG_ && console.log('hbbtv-polyfill: BroadcastVideo bindToCurrentChannel() ...');
+            window.HBBTV_POLYFILL_DEBUG && console.log('hbbtv-polyfill: BroadcastVideo bindToCurrentChannel() ...');
             var player = document.getElementById('hbbtv-polyfill-video-player');
             if (player) {
                 player.onerror = function (e) {
-                    _DEBUG_ && console.log("hbbtv-polyfill:", e);
+                    window.HBBTV_POLYFILL_DEBUG && console.log("hbbtv-polyfill:", e);
                 };
-                _DEBUG_ && console.log("hbbtv-polyfill: now play");
+                window.HBBTV_POLYFILL_DEBUG && console.log("hbbtv-polyfill: now play");
                 player.play().catch((e) => {
-                    _DEBUG_ && console.log("hbbtv-polyfill:", e, e.message, player.src);
+                    window.HBBTV_POLYFILL_DEBUG && console.log("hbbtv-polyfill:", e, e.message, player.src);
                 });
                 oipfPluginObject.playState = 2;
                 // TODO: If there is no channel currently being presented, the OITF SHALL dispatch an event to the onPlayStateChange listener(s) whereby the state parameter is given value 0 (“ unrealized ")
@@ -55,18 +53,18 @@ export class OipfVideoBroadcastMapper {
         };
 
         oipfPluginObject.setChannel = function () {
-            _DEBUG_ && console.log('hbbtv-polyfill: BroadcastVideo setChannel() ...');
+            window.HBBTV_POLYFILL_DEBUG && console.log('hbbtv-polyfill: BroadcastVideo setChannel() ...');
         };
         oipfPluginObject.prevChannel = function () {
-            _DEBUG_ && console.log('hbbtv-polyfill: BroadcastVideo prevChannel() ...');
+            window.HBBTV_POLYFILL_DEBUG && console.log('hbbtv-polyfill: BroadcastVideo prevChannel() ...');
             return currentChannel;
         };
         oipfPluginObject.nextChannel = function () {
-            _DEBUG_ && console.log('hbbtv-polyfill: BroadcastVideo nextChannel() ...');
+            window.HBBTV_POLYFILL_DEBUG && console.log('hbbtv-polyfill: BroadcastVideo nextChannel() ...');
             return currentChannel;
         };
         oipfPluginObject.release = function () {
-            _DEBUG_ && console.log('hbbtv-polyfill: BroadcastVideo release() ...2');
+            window.HBBTV_POLYFILL_DEBUG && console.log('hbbtv-polyfill: BroadcastVideo release() ...2');
             var player = document.getElementById('hbbtv-polyfill-video-player');
             if (player) {
                 player.pause();
@@ -203,7 +201,7 @@ export class OipfVideoBroadcastMapper {
         };
         // use custom namespace to track and trigger registered streamevents
         oipfPluginObject.addStreamEventListener = function (url, eventName, listener) {
-            _DEBUG_ && console.log('hbbtv-polyfill: register listener -', eventName);
+            window.HBBTV_POLYFILL_DEBUG && console.log('hbbtv-polyfill: register listener -', eventName);
             window.HBBTV_POLYFILL_NS.streamEventListeners.push({ url, eventName, listener });
         };
         oipfPluginObject.removeStreamEventListener = function (url, eventName, listener) {

@@ -31,8 +31,6 @@
 */
 /** global Application, oipfObjectFactory, oipfApplicationManager, oipfConfiguration, oipfCapabilities */
 
-var _DEBUG_ = false;
-
 export const hbbtvFn = function () {
     window.oipf = window.oipf || {};
 
@@ -41,7 +39,7 @@ export const hbbtvFn = function () {
     window.oipfObjectFactory = window.oipfObjectFactory || {};
 
     window.oipfObjectFactory.isObjectSupported = function (mimeType) {
-        _DEBUG_ && console.log('hbbtv-polyfill: isObjectSupported(' + mimeType + ') ...');
+        window.HBBTV_POLYFILL_DEBUG && console.log('hbbtv-polyfill: isObjectSupported(' + mimeType + ') ...');
         return mimeType === 'video/broadcast' ||
             mimeType === 'video/mpeg' ||
             mimeType === 'application/oipfApplicationManager' ||
@@ -52,14 +50,14 @@ export const hbbtvFn = function () {
             mimeType === 'application/oipfSearchManager';
     };
     window.oipfObjectFactory.createVideoBroadcastObject = function () {
-        _DEBUG_ && console.log('hbbtv-polyfill: createVideoBroadcastObject() ...');
+        window.HBBTV_POLYFILL_DEBUG && console.log('hbbtv-polyfill: createVideoBroadcastObject() ...');
         return class VideoBroadcastObject {
             bindToCurrentChannel() { }
             setChannel() { }
             onblur(evt) { }
             onfocus(evt) { }
-            addEventListener(eventName, callback, useCapture) { _DEBUG_ && console.log('hbbtv-polyfill: createVideoBroadcastObject / addEventListener'); }
-            removeEventListener(eventName, callback, useCapture) { _DEBUG_ && console.log('hbbtv-polyfill: createVideoBroadcastObject / addEventListener'); }
+            addEventListener(eventName, callback, useCapture) { window.HBBTV_POLYFILL_DEBUG && console.log('hbbtv-polyfill: createVideoBroadcastObject / addEventListener'); }
+            removeEventListener(eventName, callback, useCapture) { window.HBBTV_POLYFILL_DEBUG && console.log('hbbtv-polyfill: createVideoBroadcastObject / addEventListener'); }
             onPlayStateChange(evt) { }
             onPlaySpeedChanged(evt) { }
             onPlaySpeedsArrayChanged(evt) { }
@@ -71,12 +69,12 @@ export const hbbtvFn = function () {
         };
     };
     window.oipfObjectFactory.createVideoMpegObject = function () {
-        _DEBUG_ && console.log('hbbtv-polyfill: createVideoMpegObject() ...');
+        window.HBBTV_POLYFILL_DEBUG && console.log('hbbtv-polyfill: createVideoMpegObject() ...');
         return class VideoMpegObject {
             onblur(evt) { }
             onfocus(evt) { }
-            addEventListener(eventName, callback, useCapture) { _DEBUG_ && console.log('hbbtv-polyfill: createVideoBroadcastObject / addEventListener'); }
-            removeEventListener(eventName, callback, useCapture) { _DEBUG_ && console.log('hbbtv-polyfill: createVideoBroadcastObject / addEventListener'); }
+            addEventListener(eventName, callback, useCapture) { window.HBBTV_POLYFILL_DEBUG && console.log('hbbtv-polyfill: createVideoBroadcastObject / addEventListener'); }
+            removeEventListener(eventName, callback, useCapture) { window.HBBTV_POLYFILL_DEBUG && console.log('hbbtv-polyfill: createVideoBroadcastObject / addEventListener'); }
             onPlayStateChange(evt) { }
             onPlaySpeedChanged(evt) { }
             onPlaySpeedsArrayChanged(evt) { }
@@ -180,7 +178,7 @@ export const hbbtvFn = function () {
     };
 
     Application.prototype.createApplication = function (uri, createChild) {
-        _DEBUG_ && console.log('hbbtv-polyfill: createApplication: ' + uri);
+        window.HBBTV_POLYFILL_DEBUG && console.log('hbbtv-polyfill: createApplication: ' + uri);
 
         var newLocation = uri;
 
@@ -202,7 +200,7 @@ export const hbbtvFn = function () {
             }
         }
 
-        _DEBUG_ && console.log('hbbtv-polyfill: createApplication: ' + uri + " -> " + newLocation);
+        window.HBBTV_POLYFILL_DEBUG && console.log('hbbtv-polyfill: createApplication: ' + uri + " -> " + newLocation);
 
         window.signalopenhbbtvbrowser("createApplication:" + newLocation);
     };

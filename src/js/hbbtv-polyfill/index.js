@@ -2,10 +2,8 @@ import { keyEventInit } from "./keyevent-init.js";
 import { hbbtvFn } from "./hbbtv.js";
 import { VideoHandler } from "./hbb-video-handler.js";
 
-var _DEBUG_ = false;
-
 function init() {
-    _DEBUG_ && console.log("hbbtv-polyfill: load");
+    window.HBBTV_POLYFILL_DEBUG && console.log("hbbtv-polyfill: load");
 
     window.signalopenhbbtvbrowser = function(command) {
         document.title = command;
@@ -15,16 +13,16 @@ function init() {
     let cefOldXHROpen = window.XMLHttpRequest.prototype.open;
     window.XMLHttpRequest.prototype.open = function(method, url, async, user, password) {
         // do something with the method, url and etc.
-        _DEBUG_ && console.log("XMLHttpRequest.method: " + method);
-        _DEBUG_ && console.log("XMLHttpRequest.async: "  + async);
-        _DEBUG_ && console.log("XMLHttpRequest.url: "    + url);
+        window.HBBTV_POLYFILL_DEBUG && console.log("XMLHttpRequest.method: " + method);
+        window.HBBTV_POLYFILL_DEBUG && console.log("XMLHttpRequest.async: "  + async);
+        window.HBBTV_POLYFILL_DEBUG && console.log("XMLHttpRequest.url: "    + url);
 
         url = window.cefXmlHttpRequestQuirk(url);
 
-        _DEBUG_ && console.log("XMLHttpRequest.newurl: " + url);
+        window.HBBTV_POLYFILL_DEBUG && console.log("XMLHttpRequest.newurl: " + url);
         this.addEventListener('load', function() {
             // do something with the response text
-            _DEBUG_ && console.log('XMLHttpRequest: url ' + url + ', load: ' + this.responseText);
+            window.HBBTV_POLYFILL_DEBUG && console.log('XMLHttpRequest: url ' + url + ', load: ' + this.responseText);
         });
 
         return cefOldXHROpen.call(this, method, url, async, user, password);
@@ -61,7 +59,7 @@ function init() {
 
     new VideoHandler().initialize();
 
-    _DEBUG_ && console.log("hbbtv-polyfill: loaded");
+    window.HBBTV_POLYFILL_DEBUG && console.log("hbbtv-polyfill: loaded");
 }
 if (!document.body) {
     document.addEventListener("DOMContentLoaded", init);
